@@ -4,6 +4,7 @@ const app = express()
 app.use(express.json())
 const morgan = require('morgan')
 app.use(express.static('build'))
+const person= require('./models/person')
 
 
 const m =function (tokens, request, response) {
@@ -35,32 +36,11 @@ const m =function (tokens, request, response) {
 app.use(morgan(m))
 
 
-let persons = [
-    { 
-      id: 1,
-      name: "Arto Hellas", 
-      number: "040-123456"
-    },
-    { 
-      id: 2,
-      name: "Ada Lovelace", 
-      number: "39-44-5323523"
-    },
-    { 
-      id: 3,
-      name: "Dan Abramov", 
-      number: "12-43-234345"
-    },
-    { 
-      id: 4,
-      name: "Mary Poppendieck", 
-      number: "39-23-6423122"
-    }
-]
 
 app.get('/api/persons',(request,response)=>{
-
-    response.json(persons)
+  person.find({})
+  .then( persons => response.json(persons) )
+    
   
 
 })
@@ -77,53 +57,41 @@ app.get('/info',(request,response)=>{
 })
  
 app.get('/api/persons/:id',(request,response)=>{ 
+person.findById(request.params.id) 
+.then(person => {
+  if (person) {
+    response.json(person)
+  } else {
+    response.status(404).end()
+  }
+})
+.catch(error => next(error))
 
-const id= Number (request.params.id)
-const person=persons.find(person=>person.id===id)
-if(!person){
-return response.status(404).end()
+
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  person.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+})
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
 }
-
-response.json(person)
-
-
-})
-
-app.delete('/api/persons/:id',(request,response)=>{
-
-const id=Number(request.params.id)
-persons=persons.filter(person=>person.id!==id)
-
-response.status(204).end()
-
-
-})
 
 app.post('/api/persons',(request,response)=>{
     const body= request.body
-
-    const names= persons.map(person=>person.name)
-    
-    if(!body.name||!body.number){
-    return response.status(400).json({error:'content missing'})
-
-    }
-
- if(names.includes(body.name)){
-
-    return response.status(400).json({error:'name must be unique'})
-
- }
-
-
-    const person={
+    const nperson= new person({
     name:body.name,
-    number:body.number,
-    id:Math.floor(Math.random()*(10000-1)+1),
-    }
- persons=persons.concat(person)
+    number:body.number
+  
+    })
+ 
 
-  response.json(person)
+  nperson.save().then(savedperson=> response.json(savedperson))
 
 
 })
@@ -131,6 +99,20 @@ app.post('/api/persons',(request,response)=>{
  
 
 
+
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+ console.log(error.name)
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+app.use(errorHandler)
 
 const PORT = 3001
 app.listen(PORT, () => {
