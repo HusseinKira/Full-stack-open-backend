@@ -1,5 +1,5 @@
 import axios from 'axios'
-import blogservice from './blogs'
+import blogservice from './blogservices'
 const baseUrl = '/api/login'
 
 

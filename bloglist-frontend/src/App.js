@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
-import blogService from './services/blogs'
+import { useState, useEffect, useRef } from 'react'
+import blogService from './services/blogservices'
 import Notification from './components/Notification'
-import forms from './services/forms'
-
+import forms from './services/loggedindisplay'
+import Loginform from './components/Loginform'
+import loggingservice from './services/logging'
+import Input from './components/Input'
 
 
 const App = () => {
@@ -16,13 +18,12 @@ const App = () => {
   const [Message, setMessage] = useState(null)
   const [type, settype] = useState(null)
   
-
+const get= async() =>{
+  const blogs = await blogService.getAll()
+  setBlogs(blogs)
+}
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs => {
-        setBlogs(blogs)
-      })
+  get()
   }, [])
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedbloguser')
@@ -32,13 +33,21 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-
+  const handler = (event) => {
+    event.preventDefault()
+    loggingservice.handlelogin({username,password,setuser,setusername,setpassword,setMessage,settype})
+  }
+  const blogfromref = useRef()
   return (
    <div>
     <Notification message={Message} text={type}/>
       {user === null ?
-      forms.loginform({setusername,setpassword,username,password,setuser,setMessage,settype}) :forms.loggedin({title,settitle,setauthor,author,seturl,url,blogs,user,setBlogs,setMessage,settype})}
+      <Loginform handler={handler}> 
+       <Input text='username: ' type="text" name="username" value={username}  setfn={setusername}/>
+       <Input text='password: ' type="password" name="password" value={password}  setfn={setpassword}/>
+      </Loginform>
+      
+      :forms.loggedin({title,settitle,setauthor,author,seturl,url,blogs,user,setBlogs,setMessage,settype,blogfromref})}
       
     </div>
   )
