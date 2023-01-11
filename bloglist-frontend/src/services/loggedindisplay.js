@@ -44,13 +44,13 @@ import Blogform from '../components/Blogform'
       blogs.sort((a, b) => parseFloat(b.likes) - parseFloat(a.likes))
     return(
       <div>
-    <h2>blogs</h2>
+    <h1>Blogs</h1>
  <p>{user.name} logged-in <button onClick={loggingservice.logout}>logout</button></p>
-   <Togglable buttonLabel= 'create blog' ref={blogfromref}>
+   <Togglable buttonLabel= 'create blog' id='createblog' id1='cancel' ref={blogfromref}>
    <Blogform addnew={addnew}  >
-   <Input text='title:' type="text" name="title" value={title}  setfn={settitle}/>
-    <Input text='author:' type="text" name="author" value={author}  setfn={setauthor}/>
-    <Input text='url:' type="text" name="url" value={url}  setfn={seturl}/>
+   <Input text='title:' type="text" name="title" value={title}  setfn={settitle} id='title'/>
+    <Input text='author:' type="text" name="author" value={author}  setfn={setauthor} id='author'/>
+    <Input text='url:' type="text" name="url" value={url}  setfn={seturl} id='url'/>
    </Blogform>
    </Togglable>
  

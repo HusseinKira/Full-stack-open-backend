@@ -43,8 +43,8 @@ const get= async() =>{
     <Notification message={Message} text={type}/>
       {user === null ?
       <Loginform handler={handler}> 
-       <Input text='username: ' type="text" name="username" value={username}  setfn={setusername}/>
-       <Input text='password: ' type="password" name="password" value={password}  setfn={setpassword}/>
+       <Input text='username: ' type="text" name="username" value={username}  setfn={setusername} id='username'/>
+       <Input text='password: ' type="password" name="password" value={password}  setfn={setpassword} id='password'/>
       </Loginform>
       
       :forms.loggedin({title,settitle,setauthor,author,seturl,url,blogs,user,setBlogs,setMessage,settype,blogfromref})}
