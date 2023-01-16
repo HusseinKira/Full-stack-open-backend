@@ -1,15 +1,14 @@
 import { useDispatch } from 'react-redux'
-import {createanecdotes}  from '../reducers/anecdoteReducer'
-
+import {createNew}  from '../reducers/anecdoteReducer'
 const Anecdotesform =()=>{
 
  const dispatch = useDispatch()
 
- const addnewanecdotes = (event)=>{
+ const addnewanecdotes =async (event)=>{
     event.preventDefault()
     const anecdote= event.target.anecdote.value
     event.target.anecdote.value=''
-    dispatch(createanecdotes(anecdote))
+    dispatch(createNew(anecdote))
 
   }
 
