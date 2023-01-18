@@ -27,16 +27,26 @@ clearmessage(){
 
 export const{ setmessage,clearmessage} = Notificationslice.actions
 
-export const setNotification = (message,timer)=>{
+export const setNotification = (message,timer,notifstate)=>{
 
 return async dispatch =>{
+ var notclear= false 
+ if(notifstate!==null){
+  notclear=true
+ } 
+
 dispatch(setmessage(message))
-setTimeout(() => {
+
+const messageTimer= setTimeout(() => {
 
   dispatch(clearmessage())  
-    
-}, timer*1000);
+  
+}, timer*1000)
 
+
+if (notclear) {
+  clearTimeout(messageTimer);
+}
 }
 
 }
