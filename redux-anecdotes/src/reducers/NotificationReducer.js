@@ -9,8 +9,12 @@ name: 'notification',
 initialState,
 reducers:{
 setmessage(state,action){
+  console.log(action)
+if (state!==null){
 
-return action.payload
+  
+}
+return action.payload.message
 
 },
 clearmessage(){
@@ -27,15 +31,12 @@ clearmessage(){
 
 export const{ setmessage,clearmessage} = Notificationslice.actions
 
-export const setNotification = (message,timer,notifstate)=>{
+export const setNotification = (message,timer)=>{
 
 return async dispatch =>{
- var notclear= false 
- if(notifstate!==null){
-  notclear=true
- } 
 
-dispatch(setmessage(message))
+
+
 
 const messageTimer= setTimeout(() => {
 
@@ -43,10 +44,8 @@ const messageTimer= setTimeout(() => {
   
 }, timer*1000)
 
+dispatch(setmessage({message,messageTimer}))
 
-if (notclear) {
-  clearTimeout(messageTimer);
-}
 }
 
 }
